@@ -1,75 +1,85 @@
 # Jiuj (啾啾)
 
-有邮件来了，该做的事别忘了。
+Don't forget what needs to be done when emails arrive.
 
-## 项目简介
+## Project Overview
 
-Jiuj 是一个轻量级 Tauri v2 桌面工具，通过 IMAP 连接邮箱，使用 AI 自动提取重要信息（任务、日程、截止日期等），并在合适时间提醒您。
+Jiuj is a lightweight Tauri v2 desktop tool that connects to your email via IMAP, uses AI to automatically extract important information (tasks, schedules, deadlines, etc.), and reminds you at the right time.
 
-## 技术栈
+## Tech Stack
 
-- **前端**：React + TypeScript + Vite + Tailwind CSS
-- **后端**：Rust + Tauri v2
-- **数据库**：SQLite
-- **AI**：支持 OpenAI/DeepSeek/Kimi/智谱/通义千问/Claude/Ollama
+- **Frontend**: React + TypeScript + Vite + Tailwind CSS
+- **Backend**: Rust + Tauri v2
+- **Database**: SQLite
+- **AI**: OpenAI/DeepSeek/Kimi/Zhipu/Qwen/Claude/Ollama
 
-## 项目结构
+## Project Structure
 
 ```
 Jiuj/
-├── src/                    # 前端 (React/TypeScript)
-│   ├── pages/             # 页面组件
-│   ├── i18n/              # 国际化
-│   ├── types.ts           # 类型定义
-│   └── tauri-api.ts       # Tauri API 封装
-├── src-tauri/             # 后端 (Rust)
+├── src/                    # Frontend (React/TypeScript)
+│   ├── pages/             # Page components
+│   ├── i18n/              # Internationalization
+│   ├── types.ts           # Type definitions
+│   └── tauri-api.ts       # Tauri API wrapper
+├── src-tauri/             # Backend (Rust)
 │   ├── src/
-│   │   ├── db/            # 数据库层
-│   │   ├── services/      # 服务层
-│   │   ├── skills/        # Skill 加载
-│   │   ├── commands/      # Tauri 命令
-│   │   └── main.rs        # 入口
-│   └── Cargo.toml         # Rust 依赖
-└── default/               # 内置 Skill
+│   │   ├── db/            # Database layer
+│   │   ├── services/      # Service layer
+│   │   ├── skills/        # Skill loader
+│   │   ├── commands/      # Tauri commands
+│   │   └── main.rs        # Entry point
+│   └── Cargo.toml         # Rust dependencies
+└── default/               # Built-in Skill
     └── SKILL.md
 ```
 
-## 快速开始
+## Quick Start
 
-### 前置要求
+### Prerequisites
 
 - Node.js 18+
-- Rust (通过 rustup 安装)
+- Rust (install via rustup)
 
-### 安装依赖
+### Install Dependencies
 
 ```bash
 npm install
 ```
 
-### 开发模式
+### Development Mode
 
 ```bash
 npm run tauri:dev
 ```
 
-### 构建
+### Build
 
 ```bash
 npm run tauri:build
 ```
 
-## 功能特性
+## Features
 
-- ✅ 邮箱 IMAP 只读连接
-- ✅ 智能邮件预处理（脱敏 + 截断）
-- ✅ 多厂商 AI 分析
-- ✅ 事项看板（进行中/已完成）
-- ✅ 两段式到期提醒
-- ✅ Skills 自定义
-- ✅ 跳过名单（发件人/域名）
-- ✅ 国际化（中文/英文）
-- ✅ 托盘菜单
+- ✅ Email IMAP read-only connection
+- ✅ Smart email preprocessing (sanitization + truncation)
+- ✅ Multi-provider AI analysis
+- ✅ Task board (In Progress/Completed)
+- ✅ Two-stage deadline reminders
+- ✅ Custom Skills
+- ✅ Skip list (sender/domain)
+- ✅ Internationalization (Chinese/English)
+- ✅ Tray menu
+
+## Download
+
+### macOS
+
+Download: [Jiuj_0.1.0_aarch64.dmg](https://github.com/hherosoul/Jiuj/releases/download/v0.1.0/Jiuj_0.1.0_aarch64.dmg)
+
+### Windows
+
+Windows version coming soon.
 
 ## License
 
