@@ -1,0 +1,41 @@
+{
+  "productName": "Jiuj",
+  "version": "0.1.0",
+  "identifier": "com.jiuj.app",
+  "build": {
+    "beforeDevCommand": "npm run dev",
+    "beforeBuildCommand": "npm run build",
+    "devUrl": "http://localhost:5173",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "Jiuj",
+        "width": 800,
+        "height": 600,
+        "resizable": true,
+        "minWidth": 400,
+        "minHeight": 300
+      }
+    ],
+    "security": {
+      "csp": null
+    },
+    "macOSPrivateApi": true
+  },
+  "bundle": {
+    "active": true,
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "macOS": {
+      "entitlements": "./entitlements.plist",
+      "exceptionDomain": ""
+    }
+  }
+}

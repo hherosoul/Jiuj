@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!-- 禁用沙盒（开发调试用 -->
+    <key>com.apple.security.app-sandbox</key>
+    <false/>
+    
+    <!-- 允许访问应用自己的沙盒容器（应用本地数据目录） -->
+    <key>com.apple.security.files.user-selected.read-write</key>
+    <true/>
+    
+    <!-- 允许网络访问（IMAP邮件和AI API） -->
+    <key>com.apple.security.network.client</key>
+    <true/>
+    
+    <!-- 允许发送通知 -->
+    <key>com.apple.security.automation.apple-events</key>
+    <true/>
+</dict>
+</plist>
