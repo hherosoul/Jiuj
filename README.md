@@ -6,6 +6,15 @@ Don't forget what needs to be done when emails arrive.
 
 Jiuj is a lightweight Tauri v2 desktop tool that connects to your email via IMAP, uses AI to automatically extract important information (tasks, schedules, deadlines, etc.), and reminds you at the right time.
 
+### Cross-Platform Support
+
+Built with Tauri, Jiuj supports multiple operating systems:
+- ✅ macOS (Apple Silicon & Intel)
+- ✅ Windows
+- ✅ Linux
+
+The same codebase can be compiled for all major platforms. See the "Build" section for instructions.
+
 ## Tech Stack
 
 - **Frontend**: React + TypeScript + Vite + Tailwind CSS
@@ -77,9 +86,19 @@ npm run tauri:build
 
 Download: [Jiuj_0.1.0_aarch64.dmg](https://github.com/hherosoul/Jiuj/releases/download/v0.1.0/Jiuj_0.1.0_aarch64.dmg)
 
-### Windows
+### Windows & Linux
 
-Windows version coming soon.
+Windows and Linux versions are not pre-built in this release, but you can build them from the source code:
+
+```bash
+# On Windows
+npm run tauri:build
+
+# On Linux
+npm run tauri:build
+```
+
+See the "Build" section for detailed instructions.
 
 ## License
 

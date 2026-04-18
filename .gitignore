@@ -43,3 +43,6 @@ target
 *.swp
 *.swo
 *~
+
+# Releases 文件夹（本地存储安装包，不提交到 git）
+releases/
