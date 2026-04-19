@@ -90,9 +90,12 @@ impl AIAnalyzer {
         prompt.push_str("- 普通通知、广告、无明确行动项 → visible: false\n\n");
 
         if let Some(skill) = skill_content {
+            log::info!("[AIAnalyzer] Adding custom skill rules to prompt");
             prompt.push_str("## 自定义规则（优先于上述默认规则）\n");
             prompt.push_str(skill);
             prompt.push_str("\n\n");
+        } else {
+            log::info!("[AIAnalyzer] No skill content available, using only default rules");
         }
 
         prompt.push_str("## 输出格式\n");
@@ -151,8 +154,20 @@ impl AIAnalyzer {
             }
         };
 
-        let skill_content = skill_name.and_then(|n| self.skill_loader.load_skill_content(n));
+        let skill_content = skill_name.and_then(|n| {
+            let content = self.skill_loader.load_skill_content(n);
+            if let Some(ref c) = content {
+                log::info!("[AIAnalyzer] Skill content loaded for skill: {}", n);
+                log::debug!("[AIAnalyzer] Skill content preview: {}", c.chars().take(200).collect::<String>());
+            } else if let Some(n) = skill_name {
+                log::warn!("[AIAnalyzer] Failed to load skill content for skill: {}", n);
+            }
+            content
+        });
         let prompt = self.build_prompt(skill_content.as_deref(), emails)?;
+        
+        log::debug!("[AIAnalyzer] Prompt built with skill content: {}", if skill_content.is_some() { "yes" } else { "no" });
+        log::debug!("[AIAnalyzer] Prompt preview: {}", prompt.chars().take(300).collect::<String>());
 
         let client = Client::builder()
             .timeout(std::time::Duration::from_secs(LLM_TIMEOUT_SECS))

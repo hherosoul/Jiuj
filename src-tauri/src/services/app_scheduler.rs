@@ -3,6 +3,7 @@ use crate::db::*;
 use crate::services::*;
 use crate::skills::SkillLoader;
 use tokio::time::{interval, Duration as TokioDuration};
+use std::sync::atomic::{AtomicBool, Ordering};
 use tauri::{AppHandle, Emitter};
 use tauri_plugin_notification::NotificationExt;
 
@@ -15,6 +16,7 @@ pub struct AppScheduler {
     mail_fetcher: MailFetcher,
     ai_analyzer: AIAnalyzer,
     reminder_engine: ReminderEngine,
+    is_fetching: AtomicBool,
 }
 
 impl AppScheduler {
@@ -38,6 +40,7 @@ impl AppScheduler {
             mail_fetcher,
             ai_analyzer,
             reminder_engine,
+            is_fetching: AtomicBool::new(false),
         }
     }
 
@@ -108,6 +111,13 @@ impl AppScheduler {
     }
 
     async fn fetch_and_analyze(&self, app_handle: &AppHandle) {
+        // 检查是否正在拉取
+        if self.is_fetching.compare_exchange(false, true, Ordering::SeqCst, Ordering::SeqCst).is_err() {
+            log::debug!("[AppScheduler] Already fetching, skipping");
+            return;
+        }
+        
+        log::info!("[AppScheduler] Starting fetch...");
         let _ = app_handle.emit("fetch-status", "正在连接邮箱...");
 
         let skip_list_repo = self.skip_list_repo.clone();
@@ -122,11 +132,13 @@ impl AppScheduler {
             Ok(Err(e)) => {
                 log::error!("Failed to fetch emails: {}", e);
                 let _ = app_handle.emit("fetch-error", &e);
+                self.is_fetching.store(false, Ordering::SeqCst);
                 return;
             }
             Err(e) => {
                 log::error!("Fetch task panicked: {}", e);
                 let _ = app_handle.emit("fetch-error", e.to_string());
+                self.is_fetching.store(false, Ordering::SeqCst);
                 return;
             }
         };
@@ -135,27 +147,32 @@ impl AppScheduler {
 
         if emails.is_empty() {
             let _ = app_handle.emit("fetch-complete", 0u32);
+            self.is_fetching.store(false, Ordering::SeqCst);
             return;
         }
 
-        let active_skill = match self.skill_repo.get_active() {
-            Ok(s) => s,
-            Err(e) => {
+        // 在 await 之前先获取完所有需要的东西
+        let (active_skill, accounts) = match (self.skill_repo.get_active(), self.account_repo.get_all()) {
+            (Ok(skill), Ok(accs)) => (skill, accs),
+            (Err(e), _) => {
                 log::error!("Failed to get active skill: {}", e);
+                self.is_fetching.store(false, Ordering::SeqCst);
+                return;
+            }
+            (_, Err(e)) => {
+                log::error!("Failed to get accounts: {}", e);
+                self.is_fetching.store(false, Ordering::SeqCst);
                 return;
             }
         };
 
         let skill_name = active_skill.map(|s| s.name);
+        if let Some(ref name) = skill_name {
+            log::info!("[AppScheduler] Using active skill: {}", name);
+        } else {
+            log::warn!("[AppScheduler] No active skill found, using default rules");
+        }
         let mut new_items_count = 0;
-
-        let accounts = match self.account_repo.get_all() {
-            Ok(a) => a,
-            Err(e) => {
-                log::error!("Failed to get accounts: {}", e);
-                return;
-            }
-        };
 
         for (email_idx, email) in emails.iter().enumerate() {
             let _ = app_handle.emit("fetch-status", format!("正在分析第 {}/{} 封...", email_idx + 1, emails.len()));
@@ -215,6 +232,9 @@ impl AppScheduler {
         }
 
         let _ = app_handle.emit("fetch-complete", new_items_count as u32);
+        
+        log::info!("[AppScheduler] Fetch complete");
+        self.is_fetching.store(false, Ordering::SeqCst);
     }
 
     pub async fn trigger_fetch_now(&self, app_handle: AppHandle) {

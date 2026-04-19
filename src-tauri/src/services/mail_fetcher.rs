@@ -105,6 +105,13 @@ impl MailFetcher {
 
         for &uid in uids.iter() {
             let uid_u64 = uid as u64;
+            
+            // 只处理大于 last_uid 的 UID
+            if uid_u64 <= account.last_uid {
+                log::debug!("[MailFetcher] Skipping UID {} (≤ last_uid={})", uid, account.last_uid);
+                continue;
+            }
+            
             if uid_u64 > max_uid {
                 max_uid = uid_u64;
             }
